@@ -69,42 +69,101 @@
       <!-- Top-Up -->
       <div class="bg-white rounded shadow-sm p-6">
         <h5 class="text-lg font-semibold mb-4 text-gray-800">Top-Up Saldo</h5>
-        <form action="{{ route('siswa.topup') }}" method="POST" class="space-y-4">
+        <form action="{{ route('transaksi.store') }}" method="POST" class="space-y-4">
           @csrf
+          <input type="hidden" name="type" value="top_up" />
           <div>
             <label for="user_id_topup" class="block text-sm font-medium text-gray-700 mb-1">User ID (Siswa)</label>
-            <input type="number" name="user_id" id="user_id_topup" required class="w-full px-4 py-2 border rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent" />
+            <input type="number" name="user_id" id="user_id_topup" required
+              class="w-full px-4 py-2 border rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent" />
           </div>
           <div>
-            <label for="jumlah_topup" class="block text-sm font-medium text-gray-700 mb-1">Jumlah</label>
-            <input type="number" name="jumlah" id="jumlah_topup" min="1000" required class="w-full px-4 py-2 border rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent" />
+            <label for="amount_topup" class="block text-sm font-medium text-gray-700 mb-1">Jumlah</label>
+            <input type="number" name="amount" id="amount_topup" min="1000" required
+              class="w-full px-4 py-2 border rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent" />
           </div>
           <div>
-            <button type="submit" class="w-full bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700 transition duration-200">Top-Up</button>
+            <button type="submit"
+              class="w-full bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700 transition duration-200">
+              Top-Up
+            </button>
           </div>
         </form>
       </div>
-
+      
       <!-- Tarik Saldo -->
       <div class="bg-white rounded shadow-sm p-6">
         <h5 class="text-lg font-semibold mb-4 text-gray-800">Tarik Saldo</h5>
-        <form action="{{ route('siswa.tarik') }}" method="POST" class="space-y-4">
+        <form action="{{ route('transaksi.store') }}" method="POST" class="space-y-4">
           @csrf
           <input type="hidden" name="type" value="withdraw" />
           <div>
             <label for="user_id_tarik" class="block text-sm font-medium text-gray-700 mb-1">User ID (Siswa)</label>
-            <input type="number" name="user_id" id="user_id_tarik" required class="w-full px-4 py-2 border rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-red-400 focus:border-transparent" />
+            <input type="number" name="user_id" id="user_id_tarik" required
+              class="w-full px-4 py-2 border rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-red-400 focus:border-transparent" />
           </div>
           <div>
-            <label for="jumlah_tarik" class="block text-sm font-medium text-gray-700 mb-1">Jumlah</label>
-            <input type="number" name="jumlah" id="jumlah_tarik" min="1000" required class="w-full px-4 py-2 border rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-red-400 focus:border-transparent" />
+            <label for="amount_tarik" class="block text-sm font-medium text-gray-700 mb-1">Jumlah</label>
+            <input type="number" name="amount" id="amount_tarik" min="1000" required
+              class="w-full px-4 py-2 border rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-red-400 focus:border-transparent" />
           </div>
           <div>
-            <button type="submit" class="w-full bg-red-600 text-white py-2 rounded-lg hover:bg-red-700 transition duration-200">Tarik Tunai</button>
+            <button type="submit"
+              class="w-full bg-red-600 text-white py-2 rounded-lg hover:bg-red-700 transition duration-200">
+              Tarik Tunai
+            </button>
           </div>
         </form>
       </div>
+      
     </div>
+
+    <!-- Daftar Transaksi Pending -->
+<div class="bg-white p-6 rounded shadow mb-6">
+  <h3 class="text-lg font-semibold mb-4 text-gray-700">Transaksi Menunggu Persetujuan</h3>
+  @php
+    $pendingTransactions = \App\Models\Transaction::with('user')
+      ->where('status', 'pending')
+      ->latest()
+      ->get();
+  @endphp
+
+  @if ($pendingTransactions->isEmpty())
+    <p class="text-gray-500 text-sm">Tidak ada transaksi pending.</p>
+  @else
+    <table class="w-full table-auto divide-y divide-gray-200">
+      <thead class="bg-gray-50">
+        <tr>
+          <th class="px-4 py-2">ID</th>
+          <th class="px-4 py-2">Nama</th>
+          <th class="px-4 py-2">Jenis</th>
+          <th class="px-4 py-2">Jumlah</th>
+          <th class="px-4 py-2">Aksi</th>
+        </tr>
+      </thead>
+      <tbody class="bg-white divide-y divide-gray-200">
+        @foreach ($pendingTransactions as $trx)
+          <tr>
+            <td class="px-4 py-2">{{ $trx->id }}</td>
+            <td class="px-4 py-2">{{ $trx->user->name }}</td>
+            <td class="px-4 py-2 capitalize">{{ str_replace('_', ' ', $trx->type) }}</td>
+            <td class="px-4 py-2">Rp {{ number_format($trx->amount, 0, ',', '.') }}</td>
+            <td class="px-4 py-2 flex gap-2">
+              <form action="{{ route('transaksi.approve', $trx->id) }}" method="POST">
+                @csrf
+                <button class="bg-green-500 text-white px-3 py-1 rounded text-sm hover:bg-green-600">Setujui</button>
+              </form>
+              <form action="{{ route('transaksi.reject', $trx->id) }}" method="POST">
+                @csrf
+                <button class="bg-red-500 text-white px-3 py-1 rounded text-sm hover:bg-red-600">Tolak</button>
+              </form>
+            </td>
+          </tr>
+        @endforeach
+      </tbody>
+    </table>
+  @endif
+</div>
 
     <!-- Daftar Siswa -->
     <div class="bg-white p-6 rounded shadow mb-6">

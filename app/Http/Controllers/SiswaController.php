@@ -31,60 +31,56 @@ class SiswaController extends Controller
      * Proses top-up saldo siswa atau oleh bank mini.
      */
     public function topUp(Request $request)
-    {
-        $request->validate([
-            'jumlah' => 'required|numeric|min:1000',
-        ]);
+{
+    $request->validate([
+        'jumlah' => 'required|numeric|min:1000',
+    ]);
 
-        $user = $request->filled('user_id') 
-            ? User::findOrFail($request->user_id) 
-            : Auth::user();
+    $user = $request->filled('user_id') 
+        ? User::findOrFail($request->user_id) 
+        : Auth::user();
 
-        Transaction::create([
-            'user_id'    => $user->id,
-            'amount'     => $request->jumlah,
-            'type'       => 'top_up',
-            'status'     => 'completed',
-            'description'=> 'Top-up oleh ' . Auth::user()->name,
-        ]);
+    // Jangan langsung menambah saldo, tunggu persetujuan admin/bank mini
+    Transaction::create([
+        'user_id'    => $user->id,
+        'amount'     => $request->jumlah,
+        'type'       => 'top_up',
+        'status'     => 'pending',
+        'description'=> 'Top-up oleh ' . Auth::user()->name,
+    ]);
 
-        $user->balance += $request->jumlah;
-        $user->save();
-
-        return redirect()->back()->with('success', 'Top-Up berhasil!');
-    }
-
+    return redirect()->back()->with('success', 'Permintaan top-up dikirim, menunggu persetujuan.');
+}
     /**
      * Proses penarikan saldo siswa atau oleh bank mini.
      */
     public function tarikSaldo(Request $request)
-    {
-        $request->validate([
-            'jumlah' => 'required|numeric|min:1000',
-            'type'   => 'required|in:top_up,withdraw',
-        ]);
+{
+    $request->validate([
+        'jumlah' => 'required|numeric|min:1000',
+        'type'   => 'required|in:top_up,withdraw',
+    ]);
 
-        $user = $request->filled('user_id') 
-            ? User::findOrFail($request->user_id) 
-            : Auth::user();
+    $user = $request->filled('user_id') 
+        ? User::findOrFail($request->user_id) 
+        : Auth::user();
 
-        if ($user->balance < $request->jumlah) {
-            return redirect()->back()->with('error', 'Saldo tidak cukup!');
-        }
-
-        Transaction::create([
-            'user_id'    => $user->id,
-            'amount'     => $request->jumlah,
-            'type'       => $request->type,
-            'status'     => 'completed',
-            'description'=> 'Tarik saldo oleh ' . Auth::user()->name,
-        ]);
-
-        $user->balance -= $request->jumlah;
-        $user->save();
-
-        return redirect()->back()->with('success', 'Tarik saldo berhasil!');
+    // Tidak langsung mengurangi saldo
+    if ($user->balance < $request->jumlah) {
+        return redirect()->back()->with('error', 'Saldo tidak cukup!');
     }
+
+    Transaction::create([
+        'user_id'    => $user->id,
+        'amount'     => $request->jumlah,
+        'type'       => 'withdraw',
+        'status'     => 'pending',
+        'description'=> 'Tarik saldo oleh ' . Auth::user()->name,
+    ]);
+
+    return redirect()->back()->with('success', 'Permintaan penarikan dikirim, menunggu persetujuan.');
+}
+
 
     /**
      * Proses transfer saldo antar siswa.

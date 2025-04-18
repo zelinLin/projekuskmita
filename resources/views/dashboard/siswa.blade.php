@@ -112,17 +112,18 @@
             </div>
         </div>
 
-        <!-- Riwayat Transaksi -->
         <div class="card border-0 shadow-sm mt-4">
             <div class="card-body">
-                <div class="d-flex justify-content-between align-items-center mb-3">
-                    <h5 class="mb-0">Riwayat Transaksi Terakhir</h5>
-                    <a href="{{ route('siswa.cetak.riwayat') }}" class="btn btn-outline-secondary" target="_blank">
-                        <i class="bi bi-printer me-1"></i> Cetak Riwayat Transaksi
-                    </a>
-                </div>
-
                 <div class="table-responsive">
+                    <div class="card-body">
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between align-items-center mb-3">
+                                <h5 class="card-title mb-0 fw-bold">Riwayat Transaksi</h5>
+                                <a href="{{ route('siswa.cetak.riwayat') }}" target="_blank" class="btn btn-danger btn-sm">
+                                    <i class="bi bi-printer me-1"></i> Cetak PDF
+                                </a>
+                            </div>                        
+                        <div class="table-responsive">
                     <table class="table table-hover align-middle">
                         <thead class="table-light">
                             <tr>
@@ -131,6 +132,7 @@
                                 <th>Jumlah</th>
                                 <th>Nama Penerima</th>
                                 <th>Tanggal</th>
+                                <th>Status</th>  <!-- Kolom Status ditambahkan -->
                             </tr>
                         </thead>
                         <tbody>
@@ -151,10 +153,21 @@
                                 <td>Rp {{ number_format($transaction->amount, 0, ',', '.') }}</td>
                                 <td>{{ $transaction->receiver ? $transaction->receiver->name : '-' }}</td>
                                 <td>{{ $transaction->created_at->format('d M Y') }}</td>
+                                <td>
+                                    @if($transaction->status == 'pending')
+                                        <span class="badge bg-warning">Pending</span>
+                                    @elseif($transaction->status == 'approved')
+                                        <span class="badge bg-success">Disetujui</span>
+                                    @elseif($transaction->status == 'rejected')
+                                        <span class="badge bg-danger">Ditolak</span>
+                                    @else
+                                        <span class="badge bg-secondary">Lainnya</span>
+                                    @endif
+                                </td>
                             </tr>
                             @empty
                             <tr>
-                                <td colspan="5" class="text-center text-muted">Belum ada transaksi</td>
+                                <td colspan="6" class="text-center text-muted">Belum ada transaksi</td>
                             </tr>
                             @endforelse
                         </tbody>
@@ -162,6 +175,7 @@
                 </div>
             </div>
         </div>
+        
 
     </div> <!-- End .bg-white -->
 </div> <!-- End .container -->

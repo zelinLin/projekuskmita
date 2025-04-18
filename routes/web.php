@@ -35,6 +35,9 @@ Route::get('/admin', function () {
 
 Route::delete('/admin/hapus-user/{id}', [AdminController::class, 'hapusUser'])->name('admin.hapus.user');
 // ====== END ADMIN DASHBOARD ======
+Route::post('/transaksi/{id}/approve', [TransactionController::class, 'approve'])->name('transaksi.approve');
+Route::post('/transaksi/{id}/reject', [TransactionController::class, 'reject'])->name('transaksi.reject');
+// ====== END TRANSACTION ======
 
 // ====== FITUR SISWA ======
 // Top-up saldo siswa
@@ -49,13 +52,13 @@ Route::get('/siswa/print-transaksi', [SiswaController::class, 'cetakRiwayat'])->
 
 // Menampilkan riwayat transaksi untuk semua pengguna
 Route::get('/riwayat-transaksi', [TransactionController::class, 'riwayatTransaksi'])->name('riwayat.transaksi');
+Route::post('/transaksi/store', [TransactionController::class, 'store'])->name('transaksi.store');
 
 
 Route::middleware('auth')->group(function () {
     Route::get('/admin', function () {
         return redirect()->route('admin.dashboard');
     });
-
     Route::get('/admin/dashboard', [AdminController::class, 'index'])->name('admin.dashboard');
     Route::get('/bank_mini', [BankMiniController::class, 'index'])->name('bankmini.dashboard');
     Route::get('/siswa', [SiswaController::class, 'dashboard'])->name('siswa.dashboard');
