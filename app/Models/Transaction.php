@@ -27,7 +27,7 @@ class Transaction extends Model
     }
 
     /**
-     * Relasi ke User (penerima, jika ada)
+     * Relasi ke User (penerima)
      */
     public function receiver()
     {

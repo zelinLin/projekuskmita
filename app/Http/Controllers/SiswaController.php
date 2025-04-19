@@ -40,7 +40,7 @@ class SiswaController extends Controller
         ? User::findOrFail($request->user_id) 
         : Auth::user();
 
-    // Jangan langsung menambah saldo, tunggu persetujuan admin/bank mini
+    // tunggu persetujuan admin/bank mini
     Transaction::create([
         'user_id'    => $user->id,
         'amount'     => $request->jumlah,

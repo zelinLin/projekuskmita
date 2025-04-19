@@ -9,7 +9,7 @@ use Illuminate\Http\Request;
 class TransactionController extends Controller
 {
     /**
-     * Menyimpan transaksi baru (top up atau withdraw).
+     * Menyimpan transaksi baru
      */
     public function store(Request $request)
 {
@@ -21,7 +21,7 @@ class TransactionController extends Controller
 
     $user = User::findOrFail($request->user_id);
 
-    // Cek apakah yang login adalah bankmini (langsung eksekusi)
+    // Cek apakah yang login adalah bankmini
     if (auth()->user()->role === 'bank_mini') {
         // Langsung update saldo
         if ($request->type === 'top_up') {

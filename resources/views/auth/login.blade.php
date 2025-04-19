@@ -8,7 +8,7 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <style>
     body {
-      background-color: #f5f0f8; /* Soft purple background */
+      background-color: #f5f0f8; /*background */
     }
     .card {
         border: none;
@@ -16,14 +16,14 @@
         box-shadow: 0 4px 12px rgba(0,0,0,0.1);
     }
     .btn-purple {
-      background-color: #8e24aa; /* Medium purple */
+      background-color: #8e24aa; /*  button background */
         border: none;
     }
     .btn-purple:hover {
       background-color: #7b1fa2;
     }
     .text-purple {
-      color: #6a1b9a; /* Darker purple untuk judul */
+      color: #6a1b9a; /* judul */
     }
     a.custom-link {
       color: #8e24aa;

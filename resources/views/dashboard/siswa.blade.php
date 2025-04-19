@@ -132,7 +132,7 @@
                                 <th>Jumlah</th>
                                 <th>Nama Penerima</th>
                                 <th>Tanggal</th>
-                                <th>Status</th>  <!-- Kolom Status ditambahkan -->
+                                <th>Status</th>  
                             </tr>
                         </thead>
                         <tbody>
