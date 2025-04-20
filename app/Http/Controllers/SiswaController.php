@@ -137,32 +137,34 @@ class SiswaController extends Controller
      * Siswa hanya bisa cetak milik sendiri, admin/bank_mini bisa cetak semua.
      */
     public function cetakRiwayat()
-    {
-        $user = Auth::user();
+{
+    $user = Auth::user();
 
-        if ($user->role === 'siswa') {
-            $transactions = Transaction::with('receiver')
-                ->where('user_id', $user->id)
-                ->latest()
-                ->get();
-
-            $pdf = PDF::loadView('pdf.riwayat-transaksi-siswa', [
-                'siswa'       => $user,
-                'transactions'=> $transactions
-            ]);
-
-            return $pdf->download('riwayat_transaksi_' . $user->name . '.pdf');
-        }
-
-        // Untuk admin atau bank mini, tampilkan semua transaksi
-        $transactions = Transaction::with(['receiver', 'user'])
+    if ($user->role === 'siswa') {
+        $transactions = Transaction::with('receiver')
+            ->where('user_id', $user->id)
+            ->whereDate('created_at', now())
             ->latest()
             ->get();
 
-        $pdf = PDF::loadView('pdf.riwayat-transaksi-semua', [
-            'transactions' => $transactions
+        $pdf = PDF::loadView('pdf.riwayat-transaksi-siswa', [
+            'siswa'        => $user,
+            'transactions'=> $transactions
         ]);
 
-        return $pdf->download('riwayat_transaksi_semua_user.pdf');
+        return $pdf->download('riwayat_transaksi_' . $user->name . '_hari_ini.pdf');
     }
+
+    // Admin / bankmini
+    $transactions = Transaction::with(['receiver', 'user'])
+        ->whereDate('created_at', now())
+        ->latest()
+        ->get();
+
+    $pdf = PDF::loadView('pdf.riwayat-transaksi-semua', [
+        'transactions' => $transactions
+    ]);
+
+    return $pdf->download('riwayat_transaksi_semua_user_hari_ini.pdf');
+}
 }
