@@ -49,9 +49,6 @@ Route::post('/transaksi/store', [TransactionController::class, 'store'])->name('
 
 
 Route::middleware('auth')->group(function () {
-    Route::get('/admin', function () {
-        return redirect()->route('admin.dashboard');
-    });
     Route::get('/admin/dashboard', [AdminController::class, 'index'])->name('admin.dashboard');
     Route::get('/bank_mini', [BankMiniController::class, 'index'])->name('bankmini.dashboard');
     Route::get('/siswa', [SiswaController::class, 'dashboard'])->name('siswa.dashboard');

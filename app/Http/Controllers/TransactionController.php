@@ -56,19 +56,6 @@ class TransactionController extends Controller
 
     return back()->with('success', 'Transaksi berhasil dikirim dan menunggu persetujuan.');
 }
-
-    /**
-     * Menampilkan semua transaksi (untuk admin dashboard).
-     */
-    public function index()
-    {
-        $transactions = Transaction::with('user')
-            ->latest()
-            ->get();
-
-        return view('dashboard.admin', compact('transactions'));
-    }
-
     /**
      * Menampilkan riwayat transaksi lengkap (admin/bank mini).
      */
@@ -88,7 +75,6 @@ class TransactionController extends Controller
     if ($transaction->status !== 'pending') {
         return back()->with('error', 'Transaksi sudah diproses.');
     }
-
     $user = $transaction->user;
 
     if ($transaction->type === 'top_up') {

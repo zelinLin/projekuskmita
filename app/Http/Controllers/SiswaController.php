@@ -17,13 +17,11 @@ class SiswaController extends Controller
     public function dashboard()
     {
         $siswa = Auth::user();
-
         $transactions = Transaction::with('receiver')
             ->where('user_id', $siswa->id)
             ->latest()
             ->take(5)
             ->get();
-
         return view('dashboard.siswa', compact('siswa', 'transactions'));
     }
 
