@@ -16,8 +16,6 @@ Route::post('/login', [AuthController::class, 'login']);
 Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 
 // ====== ADMIN DASHBOARD ======
-// Menampilkan halaman dashboard admin
-Route::get('/admin/dashboard', [AdminController::class, 'index'])->name('admin.dashboard');
 // Menambahkan user baru (diproses melalui form di halaman dashboard admin)
 Route::post('/admin/tambah-user', [AdminController::class, 'tambahUser'])->name('admin.tambah.user');
 //Menampilkan user

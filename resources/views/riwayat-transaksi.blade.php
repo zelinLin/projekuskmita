@@ -38,7 +38,7 @@
                         <th class="px-6 py-3 text-left font-semibold">Jumlah</th>
                         <th class="px-6 py-3 text-left font-semibold">Tanggal</th>
                         <th class="px-6 py-3 text-left font-semibold">Nama Penerima</th>
-                        <th class="px-6 py-3 text-left font-semibold">Status</th> <!-- Kolom baru -->
+                        <th class="px-6 py-3 text-left font-semibold">Status</th>
                     </tr>
                 </thead>
                     @forelse($transactions->sortByDesc('created_at') as $index => $transaction)
